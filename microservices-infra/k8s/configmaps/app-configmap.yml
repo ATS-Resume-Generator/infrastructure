@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: your-namespace
+data:
+  RESUME_MANAGEMENT_SERVICE_URL: "http://resume-management-service:8080"
+  AI_ANALYSIS_SERVICE_URL: "http://ai-analysis-service:8080"
+  JOB_SEARCH_SERVICE_URL: "http://job-search-service:8080"
+  RESUME_GENERATION_SERVICE_URL: "http://resume-generation-service:8080"
+  QUALITY_AUDIT_SERVICE_URL: "http://quality-audit-service:8080"
+  NOTIFICATION_SERVICE_URL: "http://notification-service:8080"
+  WORKFLOW_ORCHESTRATOR_URL: "http://workflow-orchestrator:8080"
+  AUTH_SERVICE_URL: "http://auth-service:8080"
+  CONFIG_SERVICE_URL: "http://config-service:8080"
+  ANALYTICS_SERVICE_URL: "http://analytics-service:8080"
+  FILE_STORAGE_SERVICE_URL: "http://file-storage-service:8080"
+  API_GATEWAY_URL: "http://api-gateway:8080"
+  MONGODB_URI: "mongodb://mongodb:27017"
+  REDIS_URL: "redis://redis:6379"

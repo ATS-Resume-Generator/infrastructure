@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: quality-audit-service
+  namespace: microservices
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: quality-audit-service

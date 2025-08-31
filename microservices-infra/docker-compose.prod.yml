@@ -1,0 +1,133 @@
+version: '3.8'
+
+services:
+  resume-management-service:
+    image: resume-management-service:latest
+    restart: always
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/resume
+    networks:
+      - microservices-network
+    depends_on:
+      - mongo
+
+  ai-analysis-service:
+    image: ai-analysis-service:latest
+    restart: always
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/ai
+    networks:
+      - microservices-network
+    depends_on:
+      - mongo
+
+  job-search-service:
+    image: job-search-service:latest
+    restart: always
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/jobsearch
+    networks:
+      - microservices-network
+    depends_on:
+      - mongo
+
+  resume-generation-service:
+    image: resume-generation-service:latest
+    restart: always
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/generation
+    networks:
+      - microservices-network
+    depends_on:
+      - mongo
+
+  quality-audit-service:
+    image: quality-audit-service:latest
+    restart: always
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/audit
+    networks:
+      - microservices-network
+    depends_on:
+      - mongo
+
+  notification-service:
+    image: notification-service:latest
+    restart: always
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/notifications
+    networks:
+      - microservices-network
+    depends_on:
+      - mongo
+
+  workflow-orchestrator:
+    image: workflow-orchestrator:latest
+    restart: always
+    networks:
+      - microservices-network
+
+  auth-service:
+    image: auth-service:latest
+    restart: always
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/auth
+    networks:
+      - microservices-network
+    depends_on:
+      - mongo
+
+  config-service:
+    image: config-service:latest
+    restart: always
+    networks:
+      - microservices-network
+
+  analytics-service:
+    image: analytics-service:latest
+    restart: always
+    networks:
+      - microservices-network
+
+  file-storage-service:
+    image: file-storage-service:latest
+    restart: always
+    networks:
+      - microservices-network
+
+  api-gateway:
+    image: api-gateway:latest
+    restart: always
+    networks:
+      - microservices-network
+
+  mongo:
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - microservices-network
+
+  redis:
+    image: redis:latest
+    restart: always
+    networks:
+      - microservices-network
+
+  nginx:
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
+
+volumes:
+  mongo-data:

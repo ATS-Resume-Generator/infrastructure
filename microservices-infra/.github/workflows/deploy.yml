@@ -1,0 +1,54 @@
+name: Deploy Microservices
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Kubernetes
+        uses: azure/setup-kubectl@v1
+        with:
+          version: 'latest'
+
+      - name: Configure kubectl
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
+          export KUBECONFIG=$(pwd)/kubeconfig
+
+      - name: Deploy to Kubernetes
+        run: |
+          kubectl apply -f k8s/namespace.yml
+          kubectl apply -f k8s/deployments/
+          kubectl apply -f k8s/services/
+          kubectl apply -f k8s/configmaps/
+          kubectl apply -f k8s/secrets/
+
+      - name: Verify deployment
+        run: |
+          kubectl rollout status deployment/resume-management-service
+          kubectl rollout status deployment/ai-analysis-service
+          kubectl rollout status deployment/job-search-service
+          kubectl rollout status deployment/resume-generation-service
+          kubectl rollout status deployment/quality-audit-service
+          kubectl rollout status deployment/notification-service
+          kubectl rollout status deployment/workflow-orchestrator
+          kubectl rollout status deployment/auth-service
+          kubectl rollout status deployment/config-service
+          kubectl rollout status deployment/analytics-service
+          kubectl rollout status deployment/file-storage-service
+          kubectl rollout status deployment/api-gateway
+          kubectl rollout status deployment/mongodb
+          kubectl rollout status deployment/redis
+          kubectl rollout status deployment/nginx
+
+      - name: Notify deployment success
+        run: echo "Deployment completed successfully!"

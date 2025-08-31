@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: your-namespace
+data:
+  nginx.conf: |
+    # Load balancing and reverse proxy configuration
+    upstream backend {
+      server resume-management-service:80;
+      server ai-analysis-service:80;
+      server job-search-service:80;
+      server resume-generation-service:80;
+      server quality-audit-service:80;
+      server notification-service:80;
+      server workflow-orchestrator:80;
+      server auth-service:80;
+      server config-service:80;
+      server analytics-service:80;
+      server file-storage-service:80;
+    }
+
+    server {
+      listen 80;
+
+      location / {
+        proxy_pass http://backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+      }
+    }

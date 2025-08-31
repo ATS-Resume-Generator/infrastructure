@@ -1,0 +1,216 @@
+version: '3.8'
+
+services:
+  resume-management-service:
+    build:
+      context: ./resume-management-service
+    ports:
+      - "5001:5000"
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/resume
+    volumes:
+      - resume-data:/data
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  ai-analysis-service:
+    build:
+      context: ./ai-analysis-service
+    ports:
+      - "5002:5000"
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/ai-analysis
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  job-search-service:
+    build:
+      context: ./job-search-service
+    ports:
+      - "5003:5000"
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/job-search
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  resume-generation-service:
+    build:
+      context: ./resume-generation-service
+    ports:
+      - "5004:5000"
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/resume-gen
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  quality-audit-service:
+    build:
+      context: ./quality-audit-service
+    ports:
+      - "5005:5000"
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/quality-audit
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  notification-service:
+    build:
+      context: ./notification-service
+    ports:
+      - "5006:5000"
+    environment:
+      - DATABASE_URL=mongodb://mongo:27017/notifications
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  workflow-orchestrator:
+    build:
+      context: ./workflow-orchestrator
+    ports:
+      - "5007:5000"
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  auth-service:
+    build:
+      context: ./auth-service
+    ports:
+      - "5008:5000"
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  config-service:
+    build:
+      context: ./config-service
+    ports:
+      - "5009:5000"
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  analytics-service:
+    build:
+      context: ./analytics-service
+    ports:
+      - "5010:5000"
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  file-storage-service:
+    build:
+      context: ./file-storage-service
+    ports:
+      - "5011:5000"
+    networks:
+      - microservices-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    ports:
+      - "80:80"
+    networks:
+      - microservices-network
+    depends_on:
+      - nginx
+    restart: always
+
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - microservices-network
+    restart: always
+
+  redis:
+    image: redis:latest
+    volumes:
+      - redis-data:/data
+    networks:
+      - microservices-network
+    restart: always
+
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "8080:80"
+    networks:
+      - microservices-network
+    depends_on:
+      - api-gateway
+    restart: always
+
+networks:
+  microservices-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
+  redis-data:
